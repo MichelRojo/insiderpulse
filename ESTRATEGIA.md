@@ -1,8 +1,12 @@
-# InsiderPulse — Replanteamiento estratégico v3.0
+# InsiderPulse — Replanteamiento estratégico v3.1
 
 > Documento de estrategia. Sustituye a toda planificación anterior.
 > Escrito tras investigación de competencia, evidencia académica, marco
 > regulatorio español/UE e infraestructura gratuita disponible.
+>
+> **v3.1** — corrige el supuesto de «coste 0 €»: varios free tier prohíben el
+> uso comercial (§5.0) e incorpora el contexto de precio como parte del
+> producto (§4.5), con su modelo de costes (§5.0.1) y de licencias (§5.5).
 
 ---
 
@@ -12,7 +16,7 @@
 |---|---|---|
 | Objetivo | Ingresos reales | Hay que optimizar por distribución, no por producto |
 | Audiencia actual | **Cero** | El producto no puede ser el primer paso |
-| Presupuesto | 0 €/mes recurrente + 100-300 € puntuales | Descarta datos de pago y adquisición pagada sostenida; **permite un test de validación** |
+| Presupuesto | 0 €/mes hasta facturar + 100-300 € puntuales | El MVP validable cuesta ~1 €/mes; la producción con datos de mercado, 70-165 €/mes, **cubiertos con 9-19 suscriptores** (§5.0.1) |
 | Idioma / mercado | Español (ES + LatAm) | Nicho vacío confirmado, pero tamaño sin validar |
 | Competencia | Alternativas **gratuitas** consolidadas | No se puede competir por precio |
 
@@ -316,11 +320,98 @@ CEO», «Interim CFO», «EVP & Chief Financial Officer»…) y los booleanos
 excluyentes**. Requiere normalizador con precedencia, tomando siempre el
 **máximo, nunca la suma**.
 
+### 4.5 Contexto de precio *(decisión revisada)*
+
+**Una versión anterior de este documento proponía prescindir de cotizaciones
+para mantener el coste en 0 €. Se descarta.** El motivo es de producto, no
+técnico: una alerta sin contexto de precio no es accionable. Si la acción ya
+subió un 30 % desde que el directivo compró, la señal es información, no
+oportunidad. El usuario necesita saber **si todavía puede entrar en condiciones
+comparables a las del directivo**.
+
+Esto tiene dos consecuencias que se asumen conscientemente: rompe el principio
+de fuente única (§5.1) e introduce un coste recurrente (§5.5).
+
+#### Las dos hipótesis están en conflicto — hay que medir, no asumir
+
+| Hipótesis | Evidencia | Predicción |
+|---|---|---|
+| **Contrarian** | Rozeff & Zaman (1998); Jenter (2005) | Los directivos compran tras caídas y en *value*; esas compras anticipan reversiones. → **Cuanto más barato respecto a lo que pagó, mejor.** |
+| **Momentum** | Estudio de microcaps (2018-2024) | Las compras tras subidas > 10 % también dieron 6,3 % de retorno anormal. → **Comprar caro también funcionó.** |
+
+La regla intuitiva «más barato = mejor oportunidad» **puede ser falsa**. Es
+exactamente el tipo de supuesto que hundió el algoritmo v1. Se trata como
+**hipótesis a validar en el backtest (Fase 0)**, no como regla de negocio.
+
+#### Factores candidatos
+
+| Factor | Cálculo |
+|---|---|
+| Descuento / prima frente al directivo | `precio_actual / precio_pagado − 1` |
+| Caída desde máximo de 52 semanas | contexto de castigo previo |
+| Rentabilidad previa 3-6 meses | discrimina contrarian vs. momentum |
+| Múltiplos P/B, P/E | señal *value* (Rozeff-Zaman) |
+
+#### Límite regulatorio (MAR 596/2014, §7)
+
+Se muestran **hechos**, nunca **veredictos**:
+
+- ✅ «El consejero delegado pagó 47,20 $. Hoy cotiza a 44,10 $ (−6,6 %).»
+- ❌ «Buena oportunidad de compra.»
+
+La segunda formulación es recomendación de inversión y activa obligaciones
+regulatorias que este proyecto no puede asumir.
+
 ---
 
-## 5. Arquitectura técnica (coste 0 € verificado)
+## 5. Arquitectura técnica y costes reales
 
-### 5.1 Una única fuente de datos: SEC EDGAR
+### 5.0 Corrección: la arquitectura «0 €» no era cierta para un producto de pago
+
+Al verificar las condiciones de uso —no sólo los límites técnicos— aparecen
+**tres restricciones que no son de cuota, sino contractuales**. Un free tier
+puede aguantar la carga y aun así prohibir el uso:
+
+| Hallazgo | Impacto |
+|---|---|
+| **Vercel Hobby prohíbe el uso comercial** | No sirve en cuanto hay un solo cliente de pago |
+| **Los free tier de datos de mercado prohíben redistribución/display** | Finnhub, Tiingo, Polygon, Twelve Data, EODHD, Alpha Vantage |
+| **Supabase Free pausa proyectos inactivos** | Mitigable: el worker escribe cada 10 min, nunca se pausa |
+
+> ⚠️ Verificado con fuentes secundarias y comprobación empírica parcial. **Leer
+> los ToS primarios del proveedor elegido antes de facturar al primer cliente.**
+
+**Sustituciones:** Cloudflare Pages/Workers en lugar de Vercel (permite uso
+comercial en el plan gratuito). Supabase Free se mantiene en MVP y se pasa a Pro
+cuando haya clientes de pago, por los *backups*, no por la cuota.
+
+### 5.0.1 Modelo de costes en dos etapas
+
+| Concepto | MVP v0 | Producción v1 |
+|---|---|---|
+| Frontend (Cloudflare Pages) | 0 € | 0 € |
+| Cron (GitHub Actions, repo público) | 0 € | 0 € |
+| Base de datos (Supabase) | 0 € (Free) | ~23 € (Pro, backups) |
+| **Datos de mercado con licencia de display** | **0 €** (ver v0 abajo) | **45-140 €** |
+| Telegram | 0 € | 0 € |
+| Email (Resend, 3.000/mes) | 0 € | 0 € |
+| Dominio | ~1 € | ~1 € |
+| **Total mensual** | **~1 €** | **~70-165 €** |
+
+Stripe aparte: 1,5 % + 0,25 € por transacción europea (≈ 0,39 € sobre 9 €).
+
+**Punto de equilibrio a 9 €/mes (≈ 8,61 € netos): entre 9 y 19 suscriptores.**
+Es un listón bajo, y es la cifra que convierte el coste en una decisión
+manejable en lugar de un bloqueo.
+
+**MVP v0 — cómo llegar a producción sin licencia de datos:** mostrar el precio
+que pagó el directivo (dato de EDGAR, dominio público, sin restricción) y
+enlazar fuera para la cotización actual («Ver cotización →» a TradingView o
+Google Finance). Peor experiencia, pero **coste cero y cero riesgo legal**.
+Permite validar si el mercado quiere el producto **antes** de contratar datos.
+Cuando haya ingresos, se internaliza en v1.
+
+### 5.1 La fuente primaria: SEC EDGAR (dominio público)
 
 Verificado en esta sesión. **Sin claves de API, sin proveedor externo que
 pueda cancelar su free tier.**
@@ -346,7 +437,7 @@ Ningún proveedor gratuito ofrece cron fiable por debajo de 15 minutos:
 |---|---|---|---|
 | GitHub Actions | 5 min | Ilimitado en repos públicos | **Baja** (retrasos 3-30 min, ejecuciones omitidas) |
 | Cloudflare Workers Cron | 15 min | 100k req/día, 10 ms CPU | Alta |
-| Vercel Cron (Hobby) | 10 min | 5 jobs, 10 s ejecución | Buena |
+| Vercel Cron (Hobby) | 10 min | 5 jobs, 10 s ejecución | Buena, pero **no utilizable comercialmente** (§5.0) |
 | Supabase pg_cron + pg_net | 1 min | pg_net 5.000 llamadas/mes | Insuficiente |
 
 **Solución:** combinar **dos schedulers redundantes** (GitHub Actions +
@@ -358,10 +449,11 @@ Esto es viable precisamente porque la ventana real es de ~15 horas (§1.2).
 
 ### 5.3 Resto del stack
 
-- **Base de datos**: Supabase free (PostgreSQL 500 MB).
-  *Nota: tras filtrar, quedan ~15.000-25.000 filas/año ≈ 25 MB. Holgado
-  durante años. Una advertencia previa sobre falta de espacio era errónea.*
-- **Frontend**: Next.js en Vercel Hobby.
+- **Base de datos**: Supabase Free en MVP (PostgreSQL 500 MB) → Pro al facturar.
+  *Tras filtrar quedan ~15.000-25.000 filas/año ≈ 25 MB: la cuota sobra durante
+  años. El motivo para pasar a Pro son los backups y el SLA, no el espacio.*
+- **Frontend**: Next.js en **Cloudflare Pages** *(Vercel Hobby prohíbe el uso
+  comercial; Vercel Pro son 20 $/mes por lo mismo que Cloudflare da gratis).*
 - **Distribución**: Telegram Bot API.
 - **Email**: Resend free (3.000/mes).
 - **Pagos**: Stripe (sin coste fijo).
@@ -389,6 +481,59 @@ las tablas revocado— **nunca en la capa de aplicación**. Todo lo que se filtr
 en Python es evadible.
 
 *(El detalle SQL de esta parte está en `SPEC.md` §5, que sigue siendo válido.)*
+
+### 5.5 Cotizaciones: fuentes, licencias y estrategia de compra
+
+#### Fuentes descartadas
+
+| Fuente | Motivo |
+|---|---|
+| **Stooq** | **Verificado empíricamente:** ya no sirve CSV. Devuelve un reto *proof-of-work* en JavaScript. Automatizarlo sería sortear un control de acceso. *(Recomendada en una versión previa de este documento por error, sin probarla.)* |
+| **Yahoo Finance / `yfinance`** | Sin API oficial desde 2017. Endpoints internos no documentados; sus condiciones prohíben acceso automatizado y uso comercial. Se rompe varias veces al año. Inaceptable con clientes de pago. |
+
+#### La distinción que determina el coste
+
+| Tipo de dato | Régimen de licencia | Coste |
+|---|---|---|
+| **Tiempo real** | Acuerdos con cada mercado (NYSE, Nasdaq) + **tarifa por suscriptor** + auditorías | Prohibitivo |
+| **Cierre diario / diferido** | Sólo contrato con el proveedor, tarifa plana | Asumible |
+
+**InsiderPulse sólo necesita cierre diario.** La ventana real es de ~15 horas
+(§1.2), así que el tiempo real no aporta nada y multiplica el coste. Esto no es
+una renuncia: es coherente con la tesis del producto.
+
+#### El coste es la licencia, no el volumen
+
+Sólo hacen falta precios de los *tickers* con compras cualificadas: del orden de
+**300-500 símbolos, un cierre al día**. Cabría de sobra en cualquier free tier
+por volumen. Lo que se paga es el **derecho de display**, no las peticiones.
+
+**Corolario:** no contratar el plan más grande, sino **la licencia comercial más
+barata que permita mostrar el dato al usuario final**. Casi ningún proveedor
+publica ese precio: hay que **pedir presupuesto a varios** (EODHD, Twelve Data,
+Financial Modeling Prep, Tiingo) explicando el volumen real, que es diminuto.
+Rango esperado: **45-140 €/mes**.
+
+#### Mitigación si el precio de la licencia es alto
+
+Mostrar una **banda categórica** en lugar del precio exacto: «por debajo del
+precio del directivo» / «hasta un 10 % por encima» / «más de un 10 % por
+encima». Es dato derivado, no reconstruible hasta la cotización, y por tanto
+mucho menos restringido. Además es **mejor producto**: una ayuda a la decisión
+en lugar de un terminal de datos.
+
+#### Backtest ≠ producción
+
+Para la **Fase 0** los free tier sí valen: es investigación interna, no hay
+redistribución. **Twelve Data** (800 peticiones/día) es el más generoso. El
+backtest completo cuesta **0 €**, lo que permite validar toda la tesis antes de
+gastar un euro y preservar el presupuesto de 100-300 € para el smoke test.
+
+#### Serie histórica propia
+
+Guardar siempre en base de datos el precio del Form 4 (dominio público, es del
+propio filing). Con el tiempo genera una serie histórica **propia, gratuita e
+incancelable** que ningún proveedor puede retirar.
 
 ---
 
@@ -482,6 +627,17 @@ proyectos personales mueren por insistir en algo que nunca iba a funcionar.
 Descargar histórico de Form 4 de EDGAR, implementar la clasificación
 rutinario/oportunista y medir retornos anormales posteriores.
 
+**Coste: 0 €.** Los free tier de cotizaciones sí permiten investigación interna
+(Twelve Data, 800 peticiones/día). No se contrata nada hasta la Fase 1.
+
+Se responden **tres** preguntas, no una:
+
+1. ¿El segmento oportunista bate al rutinario? *(la tesis, §2)*
+2. ¿Qué pesos tienen realmente los factores? *(§4.3, en lugar de inventarlos)*
+3. **¿El contexto de precio añade señal, y en qué dirección?** *(§4.5 —
+   contrarian y momentum predicen lo contrario; aquí se decide cuál es cierto,
+   y si justifica pagar por datos en producción.)*
+
 **Criterio de continuación:** el segmento oportunista muestra un exceso de
 retorno consistente y estadísticamente distinguible del ruido.
 
@@ -562,6 +718,7 @@ audiencia está vendiendo humo.
 | 1 | **El mercado hispanohablante es demasiado pequeño.** España + LatAm son una fracción despreciable del tráfico de OpenInsider. Un nicho vacío puede estarlo por desatendido *o por no haber dinero.* No se puede distinguir con los datos disponibles. | **Fase 0.5 lo mide en 2 semanas por 100-300 €**, en vez de esperar 6 meses a que el SEO responda. Sigue siendo el riesgo principal, pero ahora es barato de acotar. |
 | 1b | **Meta restringe la cuenta publicitaria.** «Finance and Insurance» es Special Ad Category en la UE y «signal selling» figura como prohibido (§3.5). | Bloque A de la Fase 0.5 lo prueba por ~30 €. El canal orgánico no depende de esto, por lo que un bloqueo retrasa la validación pero no mata el proyecto. |
 | 2 | **El backtest sale plano.** | Fase 0 lo detecta en 3 semanas, antes de construir nada. |
+| 2b | **La licencia de datos de mercado resulta cara.** Ningún proveedor publica precio de display comercial; el rango estimado (45-140 €/mes) podría quedarse corto. | Pedir presupuesto a 4 proveedores **antes** de la Fase 1. Alternativas: banda categórica en vez de precio exacto, o MVP v0 con enlace externo y 0 € (§5.5). El coste sólo aparece cuando ya hay producto que vender. |
 | 3 | **La barrera técnica es baja.** Cualquiera puede replicar la ingesta. | El foso es el histórico normalizado + audiencia + track record, no el dato. |
 | 4 | **Un competidor anglófono lanza en español.** | Sólo ocurriría con tracción demostrada; para entonces la ventaja es la audiencia, que no se copia. |
 | 5 | **Deriva hacia el asesoramiento personalizado.** | Regla fija: mismo contenido para todos, sin excepciones (§7). |
