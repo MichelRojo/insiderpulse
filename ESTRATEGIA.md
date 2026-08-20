@@ -12,7 +12,7 @@
 |---|---|---|
 | Objetivo | Ingresos reales | Hay que optimizar por distribución, no por producto |
 | Audiencia actual | **Cero** | El producto no puede ser el primer paso |
-| Presupuesto | 0 €/mes | Descarta publicidad de pago y datos de pago |
+| Presupuesto | 0 €/mes recurrente + 100-300 € puntuales | Descarta datos de pago y adquisición pagada sostenida; **permite un test de validación** |
 | Idioma / mercado | Español (ES + LatAm) | Nicho vacío confirmado, pero tamaño sin validar |
 | Competencia | Alternativas **gratuitas** consolidadas | No se puede competir por precio |
 
@@ -122,9 +122,14 @@ alerta.** Todos los competidores compiten por volumen de señales.
 
 ## 3. La estrategia de distribución: el producto ES el marketing
 
-Con cero audiencia y cero presupuesto, sólo existen dos canales que compongan
-sin dinero: **SEO programático** y **una comunidad gratuita**. Ambos se
-alimentan del mismo motor de datos que ya hay que construir.
+Con cero audiencia, sólo dos canales componen sin gasto recurrente: **SEO
+programático** y **una comunidad gratuita**. Ambos se alimentan del mismo
+motor de datos que hay que construir de todos modos.
+
+A ellos se añade un tercero con papel distinto: **paid social como instrumento
+de validación puntual** (§3.5). No es un canal de crecimiento —la aritmética
+lo impide— sino una forma de comprar en dos semanas una respuesta que al SEO
+le costaría seis meses dar.
 
 ### 3.1 El backtest como activo de lanzamiento
 
@@ -176,6 +181,80 @@ las que salen mal**. Coste: 0 € (el dato ya está). Valor: es exactamente lo
 que ningún competidor hace, y resuelve el problema de confianza de raíz.
 
 Es también el mejor contenido recurrente posible: se genera solo.
+
+### 3.5 Paid social: instrumento de validación, no canal de crecimiento
+
+**Meta Ads entra en el plan con un papel muy concreto y acotado: comprar
+información, no clientes.**
+
+#### Por qué no puede ser el motor de crecimiento
+
+Benchmarks 2025-26 para el vertical financiero en España: CPC **0,95-1,60 €**,
+CPL **35-50 €**. El embudo hasta cliente de pago sale así:
+
+| | Optimista | Realista |
+|---|---|---|
+| CPC | 0,95 € | 1,20 € |
+| Landing → registro gratuito | 20 % | 12 % |
+| Coste por registro gratuito | 4,75 € | 10 € |
+| Registro → pago | 5 % | 3 % |
+| **CAC (cliente de pago)** | **95 €** | **333 €** |
+
+Frente a un **LTV de ~65 €** (9 €/mes × ~8 meses de permanencia realista,
+descontadas comisiones).
+
+**Se pierde dinero en cada cliente incluso en el escenario optimista.** No es
+un problema de creatividad ni de segmentación: es aritmética. Paid social
+sobre suscripción de bajo ticket es una trampa conocida.
+
+> **Corolario importante:** como el paid social se usa sólo para validar y no
+> para escalar, **la presión sobre el precio desaparece**. Con adquisición
+> orgánica el CAC tiende a 0 y los 9 €/mes vuelven a ser perfectamente
+> viables. Si algún día se quisiera escalar con pago, habría que subir a
+> 19-29 €/mes o convertir el plan anual por adelantado en la oferta principal.
+
+#### Riesgo de plataforma (grave, verificar antes de construir)
+
+En 2025-26 Meta trasladó **«Finance and Insurance» a Special Ad Categories**
+en la UE:
+
+- Exige **verificación del anunciante** y, en muchos casos, acreditar licencia
+  regulatoria (CNMV o entidad MiFID) — que este proyecto no necesita
+  legalmente, pero que Meta puede exigir igualmente.
+- **Sin lookalike audiences**, sin segmentación por edad ni sexo, sólo
+  ubicación amplia.
+- **«Signal selling» figura explícitamente como contenido prohibido.**
+
+Lo último es un impacto directo: esto es, literalmente, un servicio de
+señales. El modo de fallo típico no es que rechacen un anuncio, sino
+**restricción de la cuenta publicitaria**.
+
+*Nota de fiabilidad: estas fuentes son blogs especializados, no documentación
+primaria de Meta. La dirección es consistente entre ellas, pero debe
+verificarse empíricamente con gasto real antes de depender del canal.*
+
+#### Encuadre obligatorio del mensaje
+
+El encuadre determina simultáneamente la aprobación en Meta y el cumplimiento
+de MAR art. 20:
+
+| ❌ Nunca | ✅ Así |
+|---|---|
+| «Gana dinero copiando a los directivos» | «Los directivos declaran sus compras a la SEC. Te lo traducimos.» |
+| «Rentabilidad del X %» | «Qué dicen los datos de los últimos 5 años» |
+| Señales, alertas de trading | Servicio de información y análisis no personalizado |
+
+**La mejor creatividad disponible es el backtest**: «He analizado 50.000
+compras de directivos de los últimos 5 años» es un gancho verdadero, que no
+promete rentabilidades y por tanto sobrevive a la revisión automática. Una
+razón más para que la Fase 0 vaya primero.
+
+#### Optimización del gasto
+
+Los datos muestran que **Reels tiene un CPM de 3 a 5 veces inferior al Feed**
+(≈2-6 $ frente a 14-16 $). Para un test cuyo objetivo es maximizar señal por
+euro, la colocación en Reels multiplica el tamaño de muestra con el mismo
+presupuesto.
 
 ---
 
@@ -345,6 +424,12 @@ Referencia de mercado: Fintel 12,95 $, MarketBeat 9,97 $, Quiver 25 $,
 InsiderAlerts.io 49,95 $. Un precio en el entorno de **7-9 €/mes** es
 coherente, con anual descontado para generar caja temprana y compromiso.
 
+**Dependencia con el canal de adquisición** *(ver §3.5)*: este precio sólo se
+sostiene con **adquisición orgánica**, donde el CAC tiende a 0. Si en algún
+momento se decidiera escalar con publicidad pagada, la aritmética obliga a
+subir a 19-29 €/mes o a hacer del plan anual por adelantado la oferta
+principal. **No se puede tener a la vez precio bajo y adquisición pagada.**
+
 ### 6.3 Segunda vía de ingresos: afiliación de brókers
 
 Con tráfico SEO en español, los programas de afiliación de brókers
@@ -403,6 +488,31 @@ retorno consistente y estadísticamente distinguible del ruido.
 > **Si no lo muestra, el proyecto se cancela aquí.** Coste total: 3 semanas.
 > Éste es el objetivo real de la fase.
 
+### Fase 0.5 — Smoke test con Meta Ads *(2 semanas, 100-300 €)*
+
+**Ataca directamente el riesgo nº 1** (§9): saber si el mercado hispanohablante
+existe. Por vía orgánica esa respuesta tarda 6 meses; aquí se compra en dos
+semanas. No se construye producto: sólo una landing y las creatividades salidas
+del backtest de la Fase 0.
+
+| Bloque | Gasto | Pregunta que responde |
+|---|---|---|
+| **A — Política** | ~30 € | ¿Meta aprueba los anuncios o restringe la cuenta? *(§3.5)* Binario y barato. **Si falla, para: el canal no existe.** |
+| **B — Demanda** | ~150 € | ¿Le interesa a alguien? Landing + 3 creatividades en **Reels** (CPM 3-5× menor), optimizando a registro gratuito. |
+| **C — Disposición a pagar** | ~50 € | Página de precio con *fake door*: se muestra el precio y se mide quién pulsa «suscribirme», declarando con honestidad que aún no está disponible. Nunca se cobra ni se engaña. |
+
+**Criterios de decisión sobre el coste por registro gratuito:**
+
+| Resultado | Lectura | Acción |
+|---|---|---|
+| **< 3 €** | Señal fuerte de demanda | Continuar; el paid social incluso podría reconsiderarse a futuro con precio más alto |
+| **3-8 €** | Marginal | Continuar **sólo por vía orgánica**; el pago no es rentable |
+| **> 8 €** | Sin demanda apreciable | Replantear el nicho o cancelar |
+
+> **Salvedad estadística:** con 100-300 € la muestra es pequeña (decenas de
+> registros). El resultado es **direccional, no concluyente**. Sirve para
+> detectar un «no» rotundo o un «sí» claro; no para afinar previsiones.
+
 ### Fase 1 — Motor + activo de lanzamiento *(4-6 semanas)*
 
 Ingesta idempotente, base de datos, scoring calibrado con Fase 0, web con SEO
@@ -430,12 +540,18 @@ Introducir el plan de pago (§6.1) y la afiliación declarada (§6.3).
 
 | Hito | Plazo realista |
 |---|---|
+| **Saber si el proyecto tiene sentido** *(Fases 0 y 0.5)* | **Mes 1-2** |
 | Primer euro | Mes 4-6 |
 | ~100 € / mes | Mes 8-12 |
 | ~500 € / mes | Mes 12-18 *(si funciona)* |
 
-Cualquiera que prometa plazos más cortos partiendo de cero audiencia está
-vendiendo humo.
+La incorporación del smoke test no acelera los ingresos, pero **adelanta
+enormemente el momento de saber si merece la pena seguir**: la decisión de
+abandonar (o insistir) pasa del mes 6 al mes 2, por 100-300 €. Ése es el
+verdadero retorno de ese gasto.
+
+Cualquiera que prometa plazos de ingresos más cortos partiendo de cero
+audiencia está vendiendo humo.
 
 ---
 
@@ -443,7 +559,8 @@ vendiendo humo.
 
 | # | Riesgo | Mitigación |
 |---|---|---|
-| 1 | **El mercado hispanohablante es demasiado pequeño.** España + LatAm son una fracción despreciable del tráfico de OpenInsider. Un nicho vacío puede estarlo por desatendido *o por no haber dinero.* No se puede distinguir con los datos disponibles. | Fase 2 lo mide antes de invertir en monetización. Es el riesgo principal y no tiene solución previa: sólo se resuelve midiendo. |
+| 1 | **El mercado hispanohablante es demasiado pequeño.** España + LatAm son una fracción despreciable del tráfico de OpenInsider. Un nicho vacío puede estarlo por desatendido *o por no haber dinero.* No se puede distinguir con los datos disponibles. | **Fase 0.5 lo mide en 2 semanas por 100-300 €**, en vez de esperar 6 meses a que el SEO responda. Sigue siendo el riesgo principal, pero ahora es barato de acotar. |
+| 1b | **Meta restringe la cuenta publicitaria.** «Finance and Insurance» es Special Ad Category en la UE y «signal selling» figura como prohibido (§3.5). | Bloque A de la Fase 0.5 lo prueba por ~30 €. El canal orgánico no depende de esto, por lo que un bloqueo retrasa la validación pero no mata el proyecto. |
 | 2 | **El backtest sale plano.** | Fase 0 lo detecta en 3 semanas, antes de construir nada. |
 | 3 | **La barrera técnica es baja.** Cualquiera puede replicar la ingesta. | El foso es el histórico normalizado + audiencia + track record, no el dato. |
 | 4 | **Un competidor anglófono lanza en español.** | Sólo ocurriría con tracción demostrada; para entonces la ventaja es la audiencia, que no se copia. |
@@ -468,14 +585,17 @@ vendiendo humo.
 | Niveles de precio | 3 (con ancla de 39 €) | **1** |
 | Permisos | RLS `USING (true)` + tier por query param | **Vistas + `current_tier()` en Postgres** |
 | Track record | No contemplado | **Activo central de credibilidad** |
+| Paid social | No contemplado | **Validación acotada (100-300 €), no canal de crecimiento** |
 | Criterios de abandono | Ninguno | **Explícitos en cada fase** |
 
 ---
 
 ## 11. Siguiente paso concreto
 
-**Fase 0, backtest.** Es la única tarea que importa ahora, porque decide si
-existe proyecto. Concretamente:
+**Fase 0, backtest.** Sigue siendo la única tarea que importa ahora, y el orden
+no cambia por incorporar Meta Ads: el backtest **produce las creatividades y
+las cifras** que hacen creíble el anuncio de la Fase 0.5. Sin él, el smoke test
+no tiene nada que decir. Concretamente:
 
 1. Descargar el histórico de Form 4 de EDGAR (índices trimestrales completos).
 2. Parsear y normalizar identidad de insiders y cargos.
