@@ -1,4 +1,4 @@
-# InsiderPulse — Replanteamiento estratégico v3.1
+# InsiderPulse — Replanteamiento estratégico v3.2
 
 > Documento de estrategia. Sustituye a toda planificación anterior.
 > Escrito tras investigación de competencia, evidencia académica, marco
@@ -7,6 +7,17 @@
 > **v3.1** — corrige el supuesto de «coste 0 €»: varios free tier prohíben el
 > uso comercial (§5.0) e incorpora el contexto de precio como parte del
 > producto (§4.5), con su modelo de costes (§5.0.1) y de licencias (§5.5).
+>
+> **v3.2** — precios de licencia **verificados en fuente primaria**. El display
+> comercial más barato es 399 €/mes, no 45-140 €/mes: se rectifica. Se resuelve
+> con la **arquitectura de tres capas** (§5.5), que evita esa licencia y deja el
+> coste en 35-70 €/mes. Se descartan con motivos el scraping (§5.5.1), IEX,
+> Alpaca y los envoltorios open source. Se sustituye la fuente del backtest por
+> **QuantConnect** para eliminar el **sesgo de supervivencia**.
+>
+> **Verificaciones pendientes antes de la Fase 1** (§5.5): leer las condiciones
+> primarias de los widgets de TradingView; obtener por escrito si Marketstack
+> permite display; calcular el coste real de Databento *pay-as-you-go*.
 
 ---
 
@@ -16,7 +27,7 @@
 |---|---|---|
 | Objetivo | Ingresos reales | Hay que optimizar por distribución, no por producto |
 | Audiencia actual | **Cero** | El producto no puede ser el primer paso |
-| Presupuesto | 0 €/mes hasta facturar + 100-300 € puntuales | El MVP validable cuesta ~1 €/mes; la producción con datos de mercado, 70-165 €/mes, **cubiertos con 9-19 suscriptores** (§5.0.1) |
+| Presupuesto | 0 €/mes hasta facturar + 100-300 € puntuales | El MVP validable cuesta ~1 €/mes; la producción con datos de mercado, 35-70 €/mes, **cubiertos con 5-9 suscriptores** (§5.0.1) |
 | Idioma / mercado | Español (ES + LatAm) | Nicho vacío confirmado, pero tamaño sin validar |
 | Competencia | Alternativas **gratuitas** consolidadas | No se puede competir por precio |
 
@@ -392,24 +403,32 @@ cuando haya clientes de pago, por los *backups*, no por la cuota.
 | Frontend (Cloudflare Pages) | 0 € | 0 € |
 | Cron (GitHub Actions, repo público) | 0 € | 0 € |
 | Base de datos (Supabase) | 0 € (Free) | ~23 € (Pro, backups) |
-| **Datos de mercado con licencia de display** | **0 €** (ver v0 abajo) | **45-140 €** |
+| **Datos de mercado** | **0 €** (widget TradingView, §5.5) | **11-46 €** (licencia *non-display*) |
 | Telegram | 0 € | 0 € |
 | Email (Resend, 3.000/mes) | 0 € | 0 € |
 | Dominio | ~1 € | ~1 € |
-| **Total mensual** | **~1 €** | **~70-165 €** |
+| **Total mensual** | **~1 €** | **~35-70 €** |
 
 Stripe aparte: 1,5 % + 0,25 € por transacción europea (≈ 0,39 € sobre 9 €).
 
-**Punto de equilibrio a 9 €/mes (≈ 8,61 € netos): entre 9 y 19 suscriptores.**
-Es un listón bajo, y es la cifra que convierte el coste en una decisión
-manejable en lugar de un bloqueo.
+**Punto de equilibrio a 9 €/mes (≈ 8,61 € netos): entre 5 y 9 suscriptores.**
+Es un listón muy bajo, y es lo que convierte el coste en una decisión manejable
+en lugar de un bloqueo.
 
-**MVP v0 — cómo llegar a producción sin licencia de datos:** mostrar el precio
-que pagó el directivo (dato de EDGAR, dominio público, sin restricción) y
-enlazar fuera para la cotización actual («Ver cotización →» a TradingView o
-Google Finance). Peor experiencia, pero **coste cero y cero riesgo legal**.
-Permite validar si el mercado quiere el producto **antes** de contratar datos.
-Cuando haya ingresos, se internaliza en v1.
+**La cifra depende por completo de una decisión de diseño.** Si el producto
+sirviera cotizaciones desde sus propios servidores necesitaría **licencia de
+display: 399 €/mes** (EODHD, el precio publicado más barato) y el equilibrio se
+iría a **~48 suscriptores**. Evitarlo con la arquitectura de tres capas (§5.5)
+vale unos **350 €/mes** y es la diferencia entre viable y no viable en fase
+temprana.
+
+**MVP v0 — producción sin licencia de datos:** precio del Form 4 (EDGAR,
+dominio público) + widget de TradingView incrustado para la cotización actual.
+Coste cero y sin obligaciones de licencia, porque **el dato lo carga el
+navegador del usuario y nunca pasa por el servidor**. Suficiente para validar si
+el mercado quiere el producto antes de contratar nada. La licencia *non-display*
+sólo se contrata si la Fase 0 demuestra que puntuar el contexto de precio añade
+señal (§4.5).
 
 ### 5.1 La fuente primaria: SEC EDGAR (dominio público)
 
@@ -490,6 +509,11 @@ en Python es evadible.
 |---|---|
 | **Stooq** | **Verificado empíricamente:** ya no sirve CSV. Devuelve un reto *proof-of-work* en JavaScript. Automatizarlo sería sortear un control de acceso. *(Recomendada en una versión previa de este documento por error, sin probarla.)* |
 | **Yahoo Finance / `yfinance`** | Sin API oficial desde 2017. Endpoints internos no documentados; sus condiciones prohíben acceso automatizado y uso comercial. Se rompe varias veces al año. Inaceptable con clientes de pago. |
+| **Scraping propio / Apify** | Apify es alojamiento, **no una licencia**: sus condiciones dejan toda la responsabilidad legal en el usuario. Y el precedente aplicable aquí no es el estadounidense (*hiQ*, *Meta v. Bright Data*) sino **el europeo: *Ryanair v. PR Aviation* (TJUE)**, donde el derecho *sui generis* de bases de datos **sí** puede bloquear el scraping comercial de datos públicos y factuales. Ver §5.5.1. |
+| **Envoltorios open source** (OpenBB, `pandas-datareader`, `akshare`, `findatapy`) | **Ninguno aporta datos propios.** Son envoltorios de APIs de terceros y heredan sus restricciones. La licencia MIT/Apache cubre **el código, no el dato.** |
+| **IEX Exchange HIST** (gratis) | IEX es ~2-3 % del volumen consolidado. Para microcaps ilíquidas **puede no haber ninguna operación en IEX en días enteros**, y su cierre no es el cierre oficial consolidado. Justo el segmento donde está tu alfa. Además: formato PCAP binario y sólo 12 meses de retención. |
+| **Alpaca Markets** | El plan gratuito usa IEX (mismo problema). Y **las microcaps OTC no están disponibles ni en el plan de 99 $/mes**: exigen ser *broker partner*. Su uso en un SaaS ajeno a su correduría es zona gris. |
+| **WIKI / Quandl (CC0)** | Licencia impecable —dominio público absoluto— pero **los datos terminan en abril de 2018**. Inservible para producción; residual para backtest. |
 
 #### La distinción que determina el coste
 
@@ -502,32 +526,93 @@ en Python es evadible.
 (§1.2), así que el tiempo real no aporta nada y multiplica el coste. Esto no es
 una renuncia: es coherente con la tesis del producto.
 
-#### El coste es la licencia, no el volumen
+#### La distinción que lo cambia todo: *display* frente a uso interno
 
-Sólo hacen falta precios de los *tickers* con compras cualificadas: del orden de
-**300-500 símbolos, un cierre al día**. Cabría de sobra en cualquier free tier
-por volumen. Lo que se paga es el **derecho de display**, no las peticiones.
+Éste es el hallazgo central de la investigación, y **vale unos 350 €/mes**:
 
-**Corolario:** no contratar el plan más grande, sino **la licencia comercial más
-barata que permita mostrar el dato al usuario final**. Casi ningún proveedor
-publica ese precio: hay que **pedir presupuesto a varios** (EODHD, Twelve Data,
-Financial Modeling Prep, Tiingo) explicando el volumen real, que es diminuto.
-Rango esperado: **45-140 €/mes**.
+| Régimen | Qué permite | Precio más barato verificado |
+|---|---|---|
+| **Display comercial** | Servir la cotización al usuario final desde tus servidores | **EODHD, 399 €/mes** *(precio publicado; los planes de 0-99 € son sólo uso personal)* |
+| **Uso interno / *non-display*** | Calcular con el dato sin mostrarlo en crudo | **marketdata.app 12 $/mes**, Norgate ~25 $/mes, Tiingo 50 $/mes |
 
-#### Mitigación si el precio de la licencia es alto
+Mi estimación previa de «45-140 €/mes» era **optimista por un factor de 3-9** para
+display. La corrección no invalida el proyecto, pero obliga a diseñarlo para
+**no necesitar nunca licencia de display**.
 
-Mostrar una **banda categórica** en lugar del precio exacto: «por debajo del
-precio del directivo» / «hasta un 10 % por encima» / «más de un 10 % por
-encima». Es dato derivado, no reconstruible hasta la cotización, y por tanto
-mucho menos restringido. Además es **mejor producto**: una ayuda a la decisión
-en lugar de un terminal de datos.
+> ⚠️ **Marketstack (9,99 $/mes) parece la ganga y no lo es:** su contrato,
+> revisado directamente, **no menciona derechos de redistribución ni display**.
+> No los concede ni los niega. Usarlo comercialmente sin confirmación escrita es
+> riesgo legal sin cuantificar.
 
-#### Backtest ≠ producción
+#### La arquitectura que evita la licencia cara
 
-Para la **Fase 0** los free tier sí valen: es investigación interna, no hay
-redistribución. **Twelve Data** (800 peticiones/día) es el más generoso. El
-backtest completo cuesta **0 €**, lo que permite validar toda la tesis antes de
-gastar un euro y preservar el presupuesto de 100-300 € para el smoke test.
+Tres capas, cada una con su propio régimen jurídico:
+
+| Qué ve el usuario | Origen | Régimen | Coste |
+|---|---|---|---|
+| «El consejero pagó 47,20 $» | Form 4 (EDGAR) | **Dominio público** | 0 € |
+| Gráfico con la cotización actual | **Widget de TradingView incrustado** | Licenciado por TradingView; **el dato lo carga el navegador del usuario, no tu servidor** → nunca redistribuyes nada | 0 € |
+| «Cotiza por debajo del precio del directivo» | Calculado en tu servidor | Uso interno + dato derivado | 12-50 $/mes |
+
+Los widgets gratuitos de TradingView **permiten expresamente su uso en webs
+comerciales y de suscripción de pago**, a cambio de mantener su marca y su
+enlace. La comparación la hace el ojo del usuario; tú no publicas ninguna
+cotización.
+
+> **Regla de diseño innegociable:** mostrar **banda categórica**, nunca el
+> porcentaje exacto. «−6,6 %» junto al precio del Form 4 (que es público)
+> permite reconstruir la cotización, y eso **sí es display**. «Por debajo del
+> precio del directivo» no es reconstruible. Además es mejor producto: una ayuda
+> a la decisión en lugar de un terminal de datos.
+
+*(`lightweight-charts` de TradingView es Apache 2.0, pero exige aportar tu propio
+feed: no resuelve el problema del dato.)*
+
+#### Backtest: el sesgo de supervivencia es un riesgo reputacional
+
+El backtest es **el activo de lanzamiento** (§3.1): un número público que hay que
+poder defender. Si se calcula sólo sobre empresas que hoy siguen cotizando, el
+resultado sale **inflado de forma sistemática**, porque las que quebraron han
+desaparecido de la muestra. Publicar esa cifra y que alguien lo detecte
+destruiría exactamente el activo que se pretende construir.
+
+| Opción | Coste | Deslistadas | Profundidad |
+|---|---|---|---|
+| **QuantConnect** (datos AlgoSeek en su plataforma) | **0 €** | ✅ Sí | Desde 1998 |
+| **Norgate Data Platinum** | ~25 $/mes + 208 $ inicial | ✅ Sí, desde 1990 | >30 años |
+| **Sharadar** (Nasdaq Data Link) | ~30-100 $/mes | ✅ Sí | >20 años |
+| WIKI/Quandl (CC0) | 0 € | Parcial | **Sólo hasta 2018** |
+
+**Recomendación: QuantConnect para la Fase 0.** Coste cero, libre de sesgo de
+supervivencia y suficiente para decidir si el proyecto sigue adelante. La
+limitación —el backtest corre en su plataforma, no descargas el dato bruto— es
+irrelevante para esta fase. *(Descartado el «Twelve Data free» que recomendaba la
+versión anterior de este documento: su free tier prohíbe el uso comercial y,
+sobre todo, no resuelve el sesgo de supervivencia.)*
+
+#### 5.5.1 Por qué el scraping no es la salida barata
+
+Es la vía que intuitivamente parece resolver el coste. No lo hace: **traslada el
+riesgo en lugar de eliminarlo.**
+
+| Precedente | Qué establece | ¿Aplica aquí? |
+|---|---|---|
+| *hiQ v. LinkedIn* (EEUU) | Raspar datos públicos no es delito informático… **pero hiQ perdió por incumplimiento contractual** | Parcialmente |
+| *Meta v. Bright Data* (EEUU) | Sin login y con datos públicos, el riesgo baja | Parcialmente |
+| ***Ryanair v. PR Aviation*** **(TJUE)** | **El derecho *sui generis* de bases de datos puede bloquear el scraping comercial de datos públicos y factuales en la UE** | **Sí. Es el aplicable.** |
+
+El precedente favorable es estadounidense; el que rige aquí es el europeo, y es
+el desfavorable.
+
+Pero el argumento decisivo es de negocio, no jurídico: **el activo de este
+proyecto es la credibilidad** (§3.4, track record público y auditable).
+Publicar un histórico auditable construido sobre datos que no se tiene derecho a
+usar es una contradicción interna. Y el modo de fallo típico no es un pleito: es
+un bloqueo de IP o un requerimiento que **mata el servicio de un día para otro,
+con clientes ya pagando**.
+
+**Dónde sí es admisible:** en la Fase 0. Investigación interna, sin
+redistribución ni publicación del dato bruto. Ahí el riesgo es marginal.
 
 #### Serie histórica propia
 
@@ -627,8 +712,14 @@ proyectos personales mueren por insistir en algo que nunca iba a funcionar.
 Descargar histórico de Form 4 de EDGAR, implementar la clasificación
 rutinario/oportunista y medir retornos anormales posteriores.
 
-**Coste: 0 €.** Los free tier de cotizaciones sí permiten investigación interna
-(Twelve Data, 800 peticiones/día). No se contrata nada hasta la Fase 1.
+**Coste: 0 €** con **QuantConnect** (datos AlgoSeek desde 1998, incluidas
+empresas deslistadas). No se contrata nada hasta la Fase 1.
+
+> **Requisito innegociable: el backtest debe estar libre de sesgo de
+> supervivencia.** Calcularlo sólo sobre empresas que hoy siguen cotizando
+> infla el resultado de forma sistemática. Como esta cifra se va a publicar
+> (§3.1), un sesgo detectable destruiría la credibilidad que el proyecto intenta
+> construir. Por eso no vale cualquier fuente gratuita (ver §5.5).
 
 Se responden **tres** preguntas, no una:
 
@@ -718,7 +809,7 @@ audiencia está vendiendo humo.
 | 1 | **El mercado hispanohablante es demasiado pequeño.** España + LatAm son una fracción despreciable del tráfico de OpenInsider. Un nicho vacío puede estarlo por desatendido *o por no haber dinero.* No se puede distinguir con los datos disponibles. | **Fase 0.5 lo mide en 2 semanas por 100-300 €**, en vez de esperar 6 meses a que el SEO responda. Sigue siendo el riesgo principal, pero ahora es barato de acotar. |
 | 1b | **Meta restringe la cuenta publicitaria.** «Finance and Insurance» es Special Ad Category en la UE y «signal selling» figura como prohibido (§3.5). | Bloque A de la Fase 0.5 lo prueba por ~30 €. El canal orgánico no depende de esto, por lo que un bloqueo retrasa la validación pero no mata el proyecto. |
 | 2 | **El backtest sale plano.** | Fase 0 lo detecta en 3 semanas, antes de construir nada. |
-| 2b | **La licencia de datos de mercado resulta cara.** Ningún proveedor publica precio de display comercial; el rango estimado (45-140 €/mes) podría quedarse corto. | Pedir presupuesto a 4 proveedores **antes** de la Fase 1. Alternativas: banda categórica en vez de precio exacto, o MVP v0 con enlace externo y 0 € (§5.5). El coste sólo aparece cuando ya hay producto que vender. |
+| 2b | **La licencia de datos de mercado resulta cara.** Verificado: el display comercial más barato con precio publicado es **EODHD, 399 €/mes** — de 3 a 9 veces mi estimación inicial. | **Resuelto por diseño, no por presupuesto:** arquitectura de tres capas (§5.5) que evita la licencia de display. EDGAR + widget de TradingView + licencia *non-display* de 11-46 €/mes. Riesgo residual: que TradingView cambie las condiciones de sus widgets; mitigable volviendo al enlace externo. |
 | 3 | **La barrera técnica es baja.** Cualquiera puede replicar la ingesta. | El foso es el histórico normalizado + audiencia + track record, no el dato. |
 | 4 | **Un competidor anglófono lanza en español.** | Sólo ocurriría con tracción demostrada; para entonces la ventaja es la audiencia, que no se copia. |
 | 5 | **Deriva hacia el asesoramiento personalizado.** | Regla fija: mismo contenido para todos, sin excepciones (§7). |
